@@ -22,6 +22,15 @@
 		.workspace {
 			background-color: #EDEDEB;
 		}
+		.axis path,
+		.axis line {
+			fill: none;
+			stroke: #ccc;
+			shape-render: auto;
+		}
+		.axis text {
+			font-size: 8px;
+		}
 		</style>
 	</head>
 	<body>
@@ -83,7 +92,7 @@
 			</div>
 		</div>
 		<script>
-			var margin = {top: 20, right: 10, bottom: 20, left: 10};
+			var margin = {top: 20, right: 10, bottom: 20, left: 125};
 			var height = 450 - margin.top - margin.bottom;
 			var width = 600 - margin.right - margin.left;
 			var startSvg = d3.select("#start").append("svg")
@@ -124,6 +133,13 @@
 
 			console.log(data);
 
+			data.sort(function(a, b) {
+				// If a > b then a - b will return a value > 0, gives a a higher index value than b.
+				// a - b will sort values in ascending order.
+				// b - a will sort values in descending order.
+				return a.horsePower - b.horsePower;
+			});
+
 			var xScale = d3.scale.linear()
 				.domain(d3.extent(data, function(d) { return d.horsePower; }))
 				.range([0, width]);
@@ -132,14 +148,30 @@
 				.domain(data.map(function(d) { return d.car; }))
 				.rangeRoundBands([height, 0], 0, 1);
 
-			bars = goalSvg.selectAll("rect")
+			var yAxis = d3.svg.axis()
+				.scale(yScale)
+				.orient("left");
+
+			var goalG = goalSvg.selectAll("g")
 				.data(data).enter()
-				.append("rect")
-				.attr("x", 0)
-				.attr("y", function(d) { return yScale(d.car); })
+				.append("g")
+				.attr("class", "bar")
+				.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
+
+			bars = goalG.append("rect")
+				.attr("x", margin.left)
 				.attr("height", height / data.length - 2.5)
 				.attr("width", function(d) { return xScale(d.horsePower); })
 				.attr("fill", "steelblue");
+
+			text = goalG.append("text")
+				.attr("x", function(d) { return xScale(d.horsePower); })
+				.style("text-anchor", "end");
+
+			goalSvg.append("g")
+				.attr("class", "y axis")
+				.attr("transform", "translate(" + margin.left + ", 0)")
+				.call(yAxis);
 
 			});
 
