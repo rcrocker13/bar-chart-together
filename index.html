@@ -77,10 +77,10 @@
 				</div>
 			</div>
 				<div class="row workspace">
-					<div id="start" class="col-sm-6">
+					<div id="start" class="col-md-6">
 						<h5>Start</h5>
 					</div>
-					<div id="goal" class="col-sm-6">
+					<div id="goal" class="col-md-6">
 						<div class="row">
 							<div class="col-md-3">
 								<h5>Goal</h5>
@@ -115,7 +115,7 @@
 
 			var margin = {top: 20, right: 10, bottom: 20, left: 125};
 			var height = 450 - margin.top - margin.bottom;
-			var width = 600 - margin.right - margin.left;
+			var width = 700 - margin.right - margin.left;
 			var startSvg = d3.select("#start").append("svg")
 				.attr("width", width)
 				.attr("height", height)
@@ -194,8 +194,6 @@
 
 			// ***** TRY TO RESHUFFLE
 			d3.select("#goal").on("click", function() {
-
-				alert("I've been clicked");
 
 				data.sort(function(a, b) {
 					return a.quarterMile - b.quarterMile;
