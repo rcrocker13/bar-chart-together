@@ -47,7 +47,6 @@
 			.axis line {
 				fill: none;
 				stroke: #ccc;
-				shape-render: auto;
 			}
 			.axis text {
 				font-size: 8px;
@@ -62,7 +61,7 @@
 				</header>
 			</div>
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<h4>HTML</h4>
 					<ul>
 						<li>head</li>
@@ -70,7 +69,7 @@
 						<li>body</li>
 					</ul>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<h4>CSS</h4>
 					<ul>
 						<li>selector</li>
@@ -78,7 +77,15 @@
 						<li>hover</li>
 					</ul>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-2">
+					<h4>JavaScript</h4>
+					<ul>
+						<li>variables</li>
+						<li>functions</li>
+						<li>AJAX</li>
+					</ul>
+				</div>
+				<div class="col-md-2">
 					<h4>SVG</h4>
 					<ul>
 						<li>nesting</li>
@@ -86,7 +93,7 @@
 						<li>properties</li>
 					</ul>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<h4>D3</h4>
 					<ul>
 						<li>data</li>
@@ -107,7 +114,7 @@
 							<div class="col-md-6">
 								<!-- These are just like parameters in Tableau -->
 								<select  id="goalSelection" class="pull-right" name="goalSelection">
-									<option>Carburetors</option>
+									<option title="Bang!">Carburetors</option>
 									<option>Cylinders</option>
 									<option>Displacement</option>
 									<option>Gears</option>
@@ -124,17 +131,18 @@
 			<div class="row">
 				<footer class="col-md-12">
 					<p>
-						For more information reachout to SFdataviz@slalom.com.
+						For more information reachout to <a href="mailto:SFdataviz@slalom.com">SF Data Viz</a>.
 					</p>
 				</footer>
 			</div>
 		</div>
 		<script>
+			// render the jQuery dropdown element
 		  $(function() {
 		    $( "#goalSelection" ).selectmenu();
 		 	});
 
-			var margin = {top: 20, right: 10, bottom: 20, left: 125};
+			var margin = {top: 20, right: 10, bottom: 20, left: 100};
 			var height = 450 - margin.top - margin.bottom;
 			var width = 700 - margin.right - margin.left;
 			var startSvg = d3.select("#start").append("svg")
@@ -154,118 +162,128 @@
 
 			d3.csv("mtcars.csv", function(data) {
 
-			data = data.map(function(d) {
+				data = data.map(function(d) {
 
-				return {
-					car: d.car,
-					mpg: +d.mpg,
-					cylinders: +d.cyl,
-					displacement: +d.disp,
-					horsePower: +d.hp,
-					drat: +d.drat,
-					weight: +d.wt,
-					quarterMile: +d.qt,
-					vs: +d.vs,
-					am: +d.am,
-					gears: +d.gear,
-					carburetors: +d.carb
-				};
+					return {
+						car: d.car,
+						mpg: +d.mpg,
+						cylinders: +d.cyl,
+						displacement: +d.disp,
+						horsePower: +d.hp,
+						drat: +d.drat,
+						weight: +d.wt,
+						quarterMile: +d.qt,
+						vs: +d.vs,
+						am: +d.am,
+						gears: +d.gear,
+						carburetors: +d.carb
+					};
 
-			});
+				});
 
-			console.log(data);
+				console.log(data);
 
-			data.sort(function(a, b) {
-				// If a > b then a - b will return a value > 0, gives a a higher index value than b.
-				// a - b will sort values in ascending order.
-				// b - a will sort values in descending order.
-				return a.horsePower - b.horsePower;
-			});
+				data.sort(function(a, b) {
+					// If a > b then a - b will return a value > 0, gives a a higher index value than b.
+					// a - b will sort values in ascending order.
+					// b - a will sort values in descending order.
+					return a.horsePower - b.horsePower;
+				});
 
-			var xScale = d3.scale.linear()
-				.domain(d3.extent(data, function(d) { return d.horsePower; }))
-				.range([0, width]);
+				var xScale = d3.scale.linear()
+					.domain(d3.extent(data, function(d) { return d.horsePower; }))
+					.range([0, width]);
 
-			var yScale = d3.scale.ordinal()
-				.domain(data.map(function(d) { return d.car; }))
-				.rangeRoundBands([height, 0], 0, 1);
+				var yScale = d3.scale.ordinal()
+					.domain(data.map(function(d) { return d.car; }))
+					.rangeRoundBands([height, 0], 0, 1);
 
-			var yAxis = d3.svg.axis()
-				.scale(yScale)
-				.orient("left");
+				var yAxis = d3.svg.axis()
+					.scale(yScale)
+					.orient("left");
 
-			var goalG = goalSvg.selectAll("g")
-				.data(data).enter()
-				.append("g")
-				.attr("class", "bar")
-				.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
+				var goalG = goalSvg.selectAll("g")
+					.data(data).enter()
+					.append("g")
+					.attr("class", "bar")
+					.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
 
-			bars = goalG.append("rect")
-				.attr("x", margin.left)
-				.attr("height", height / data.length - 2.5)
-				.attr("width", function(d) { return xScale(d.horsePower); })
-				.attr("fill", "steelblue");
+				bars = goalG.append("rect")
+					.attr("x", margin.left)
+					.attr("height", height / data.length - 2.5)
+					.attr("width", function(d) { return xScale(d.horsePower); })
+					.attr("fill", "steelblue");
 
 			goalSvg.append("g")
 				.attr("class", "y axis")
 				.attr("transform", "translate(" + margin.left + ", 0)")
-				.call(yAxis);
+				.call(yAxis)
 
-			});
+			goalSvg.selectAll("path")
+				.style("fill", "none");
 
-			// ***** TRY TO RESHUFFLE
-			d3.select("#goal").on("click", function() {
 
-				d3.selectAll("rect")
-					.update();
+			goalSvg.selectAll("line")
+				.style("stroke", "#ccc");
 
-				d3.csv("mtcars.csv", function(data) {
-
-					data = data.map(function(d) {
-
-						return {
-							car: d.car,
-							mpg: +d.mpg,
-							cylinders: +d.cyl,
-							displacement: +d.disp,
-							horsePower: +d.hp,
-							drat: +d.drat,
-							weight: +d.wt,
-							quarterMile: +d.qt,
-							vs: +d.vs,
-							am: +d.am,
-							gears: +d.gear,
-							carburetors: +d.carb
-						};
-					});
-
-					data.sort(function(a, b) {
-						return a.quarterMile - b.quarterMile;
-					});
-
-					var xScale = d3.scale.linear()
-						.domain(d3.extent(data, function(d) { return d.quarterMile; }))
-						.range([0, width]);
-
-					var yScale = d3.scale.ordinal()
-						.domain(data.map(function(d) { return d.car; }))
-						.rangeRoundBands([height, 0], 0, 1);
-
-					var goalG = goalSvg.selectAll("g")
-						.data(data).enter()
-						.append("g")
-						.attr("class", "bar")
-						.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
-
-					bars = goalG.append("rect")
-						.attr("x", margin.left)
-						.attr("height", height / data.length - 2.5)
-						.attr("width", function(d) { return xScale(d.quarterMile); })
-						.attr("fill", "steelblue");
+			goalSvg.selectAll("text")
+				.style("font-size", "8px");
 
 				});
 
-			});
+				// ***** TRY TO RESHUFFLE
+				// d3.select("#goal").on("click", function() {
+
+					// 	d3.selectAll("rect")
+					// 		.update();
+
+					// 	d3.csv("mtcars.csv", function(data) {
+
+					// 		data = data.map(function(d) {
+
+					// 			return {
+					// 				car: d.car,
+					// 				mpg: +d.mpg,
+					// 				cylinders: +d.cyl,
+					// 				displacement: +d.disp,
+					// 				horsePower: +d.hp,
+					// 				drat: +d.drat,
+					// 				weight: +d.wt,
+					// 				quarterMile: +d.qt,
+					// 				vs: +d.vs,
+					// 				am: +d.am,
+					// 				gears: +d.gear,
+					// 				carburetors: +d.carb
+					// 			};
+					// 		});
+
+					// 		data.sort(function(a, b) {
+					// 			return a.quarterMile - b.quarterMile;
+					// 		});
+
+					// 		var xScale = d3.scale.linear()
+					// 			.domain(d3.extent(data, function(d) { return d.quarterMile; }))
+					// 			.range([0, width]);
+
+					// 		var yScale = d3.scale.ordinal()
+					// 			.domain(data.map(function(d) { return d.car; }))
+					// 			.rangeRoundBands([height, 0], 0, 1);
+
+					// 		var goalG = goalSvg.selectAll("g")
+					// 			.data(data).enter()
+					// 			.append("g")
+					// 			.attr("class", "bar")
+					// 			.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
+
+					// 		bars = goalG.append("rect")
+					// 			.attr("x", margin.left)
+					// 			.attr("height", height / data.length - 2.5)
+					// 			.attr("width", function(d) { return xScale(d.quarterMile); })
+					// 			.attr("fill", "steelblue");
+
+					// 	});
+
+				// });
 
 			</script>
 		</body>
