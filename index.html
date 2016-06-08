@@ -3,13 +3,15 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Getting Started with D3</title>
-		<link rel="stylesheet" href="libs/jquery-ui/jquery-ui.css">
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
 		<script type="text/javascript" src="libs/jquery-ui/external/jquery/jquery.js"></script>
 		<script type="text/javascript" src="libs/jquery-ui/jquery-ui.js"></script>
 		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 		<script type="text/javascript" src="libs/bootstrap-select/js/bootstrap-select.js"></script>
+
+		<link rel="stylesheet" href="libs/jquery-ui/jquery-ui.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
 		<style>
 			header {
 				padding-top: 15px;
@@ -43,10 +45,22 @@
 	      height: 200px;
 	    }
 			<!-- D3 Styles -->
+			<!-- WHY DOES THIS HOVER NOT WORK WITHOUT INCLUDE THE RECT SELECTOR?
+ 			rect {
+	      -moz-transition: all 0.5s;
+	      -o-transition: all 0.5s;
+	      -webkit-transition: all 0.5s;
+	      transition: all 0.5s;
+	      fill: orange;
+			}
+/* 			.bar:hover {
+				fill: orange;
+			} */
 			.axis path,
 			.axis line {
 				fill: none;
 				stroke: #ccc;
+				shape-rendering: auto;
 			}
 			.axis text {
 				font-size: 8px;
@@ -108,10 +122,10 @@
 					</div>
 					<div id="goal" class="col-md-6">
 						<div class="row goal-header">
-							<div class="col-md-6">
+							<div class="col-md-8">
 								<h5>Goal</h5>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-4">
 								<!-- These are just like parameters in Tableau -->
 								<select  id="goalSelection" class="pull-right" name="goalSelection">
 									<option title="Bang!">Carburetors</option>
@@ -196,7 +210,7 @@
 
 				var yScale = d3.scale.ordinal()
 					.domain(data.map(function(d) { return d.car; }))
-					.rangeRoundBands([height, 0], 0, 1);
+					.rangeBands([height, 0]);
 
 				var yAxis = d3.svg.axis()
 					.scale(yScale)
@@ -209,25 +223,24 @@
 					.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
 
 				bars = goalG.append("rect")
+					.attr("class", "bar")
 					.attr("x", margin.left)
 					.attr("height", height / data.length - 2.5)
 					.attr("width", function(d) { return xScale(d.horsePower); })
-					.attr("fill", "steelblue");
+					.attr("fill", "steelblue")
+					.on("mouseover", function() {
+		        d3.select(this)
+		          .attr("fill", "orange");
+					})
+					.on("mouseout", function() {
+		        d3.select(this)
+		          .attr("fill", "steelblue");
+					});
 
 			goalSvg.append("g")
 				.attr("class", "y axis")
-				.attr("transform", "translate(" + margin.left + ", 0)")
-				.call(yAxis)
-
-			goalSvg.selectAll("path")
-				.style("fill", "none");
-
-
-			goalSvg.selectAll("line")
-				.style("stroke", "#ccc");
-
-			goalSvg.selectAll("text")
-				.style("font-size", "8px");
+				.attr("transform", "translate(" + margin.left + ",0)")
+				.call(yAxis);
 
 				});
 
