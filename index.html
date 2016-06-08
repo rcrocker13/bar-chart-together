@@ -3,36 +3,55 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Getting Started with D3</title>
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery-ui/jquery-ui.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+		<script type="text/javascript" src="libs/jquery-ui/external/jquery/jquery.js"></script>
+		<script type="text/javascript" src="libs/jquery-ui/jquery-ui.js"></script>
 		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 		<script type="text/javascript" src="libs/bootstrap-select/js/bootstrap-select.js"></script>
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-		<link rel="stylesheet" href="libs/bootstrap-select/css/bootstrap-select.css">
 		<style>
-		header {
-			padding-top: 15px;
-			padding-left: 15px;
-			background-color: #3D3D3D;
-			color: #EEE;
-		}
-		footer {
-			padding-top: 5px;
-			padding-left: 5px;
-			background-color: #3D3D3D;
-			color: #EEE;
-		}
-		.workspace {
-			background-color: #EDEDEB;
-		}
-		.axis path,
-		.axis line {
-			fill: none;
-			stroke: #ccc;
-			shape-render: auto;
-		}
-		.axis text {
-			font-size: 8px;
-		}
+			header {
+				padding-top: 15px;
+				padding-left: 15px;
+				background-color: #3D3D3D;
+				color: #EEE;
+			}
+			footer {
+				padding-top: 5px;
+				padding-left: 5px;
+				background-color: #3D3D3D;
+				color: #EEE;
+			}
+			.goal-header {
+				margin-top: 10px;
+			}
+			.workspace {
+				background-color: #EDEDEB;
+			}
+	    fieldset {
+	      border: 0;
+	    }
+	    label {
+	      display: block;
+	      margin: 30px 0 0 0;
+	    }
+	    select {
+	      width: 150px;
+	    }
+	    .overflow {
+	      height: 200px;
+	    }
+			<!-- D3 Styles -->
+			.axis path,
+			.axis line {
+				fill: none;
+				stroke: #ccc;
+				shape-render: auto;
+			}
+			.axis text {
+				font-size: 8px;
+			}
 		</style>
 	</head>
 	<body>
@@ -81,13 +100,13 @@
 						<h5>Start</h5>
 					</div>
 					<div id="goal" class="col-md-6">
-						<div class="row">
-							<div class="col-md-3">
+						<div class="row goal-header">
+							<div class="col-md-6">
 								<h5>Goal</h5>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-6">
 								<!-- These are just like parameters in Tableau -->
-								<select class="selectpicker" data-container="body">
+								<select  id="goalSelection" class="pull-right" name="goalSelection">
 									<option>Carburetors</option>
 									<option>Cylinders</option>
 									<option>Displacement</option>
@@ -111,7 +130,9 @@
 			</div>
 		</div>
 		<script>
-			$(".selectpicker").on('changed.bs.select', function() { $(this).collapse('hide'); });
+		  $(function() {
+		    $( "#goalSelection" ).selectmenu();
+		 	});
 
 			var margin = {top: 20, right: 10, bottom: 20, left: 125};
 			var height = 450 - margin.top - margin.bottom;
@@ -195,31 +216,57 @@
 			// ***** TRY TO RESHUFFLE
 			d3.select("#goal").on("click", function() {
 
-				data.sort(function(a, b) {
-					return a.quarterMile - b.quarterMile;
+				d3.selectAll("rect")
+					.update();
+
+				d3.csv("mtcars.csv", function(data) {
+
+					data = data.map(function(d) {
+
+						return {
+							car: d.car,
+							mpg: +d.mpg,
+							cylinders: +d.cyl,
+							displacement: +d.disp,
+							horsePower: +d.hp,
+							drat: +d.drat,
+							weight: +d.wt,
+							quarterMile: +d.qt,
+							vs: +d.vs,
+							am: +d.am,
+							gears: +d.gear,
+							carburetors: +d.carb
+						};
+					});
+
+					data.sort(function(a, b) {
+						return a.quarterMile - b.quarterMile;
+					});
+
+					var xScale = d3.scale.linear()
+						.domain(d3.extent(data, function(d) { return d.quarterMile; }))
+						.range([0, width]);
+
+					var yScale = d3.scale.ordinal()
+						.domain(data.map(function(d) { return d.car; }))
+						.rangeRoundBands([height, 0], 0, 1);
+
+					var goalG = goalSvg.selectAll("g")
+						.data(data).enter()
+						.append("g")
+						.attr("class", "bar")
+						.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
+
+					bars = goalG.append("rect")
+						.attr("x", margin.left)
+						.attr("height", height / data.length - 2.5)
+						.attr("width", function(d) { return xScale(d.quarterMile); })
+						.attr("fill", "steelblue");
+
 				});
 
-				var xScale = d3.scale.linear()
-					.domain(d3.extent(data, function(d) { return d.quarterMile; }))
-					.range([0, width]);
+			});
 
-				var yScale = d3.scale.ordinal()
-					.domain(data.map(function(d) { return d.car; }))
-					.rangeRoundBands([height, 0], 0, 1);
-
-				var goalG = goalSvg.selectAll("g")
-					.data(data).enter()
-					.append("g")
-					.attr("class", "bar")
-					.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
-
-				bars = goalG.append("rect")
-					.attr("x", margin.left)
-					.attr("height", height / data.length - 2.5)
-					.attr("width", function(d) { return xScale(d.quarterMile); })
-					.attr("fill", "steelblue");
-
-			})
 			</script>
 		</body>
 </html>
