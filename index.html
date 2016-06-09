@@ -53,9 +53,9 @@
 	      transition: all 0.5s;
 	      fill: orange;
 			}
-/* 			.bar:hover {
+			.invisible:hover {
 				fill: orange;
-			} */
+			}
 			.axis path,
 			.axis line {
 				fill: none;
@@ -156,6 +156,8 @@
 		    $( "#goalSelection" ).selectmenu();
 		 	});
 
+			$( ".selector" ).on( "selectmenuchange", function( event, ui ) {} );
+
 			var margin = {top: 20, right: 10, bottom: 20, left: 100};
 			var height = 450 - margin.top - margin.bottom;
 			var width = 700 - margin.right - margin.left;
@@ -216,6 +218,25 @@
 					.scale(yScale)
 					.orient("left");
 
+				goalSvg.selectAll("rect")
+					.data(data).enter()
+					.append("rect")
+					.attr("class", "invisible bar")
+					.attr("x", margin.left)
+					.attr("y", function(d) { return yScale(d.car); })
+					.attr("height", height / data.length - 2.5)
+					.attr("width", width)
+					.on("mouseover", function() {
+		        d3.select(this)
+		          .attr("fill", "orange");
+					})
+					.on("mouseout", function() {
+		        d3.select(this)
+		        	.transition()
+		        	.duration(250)
+		          .attr("fill", "steelblue");
+					});
+
 				var goalG = goalSvg.selectAll("g")
 					.data(data).enter()
 					.append("g")
@@ -227,20 +248,12 @@
 					.attr("x", margin.left)
 					.attr("height", height / data.length - 2.5)
 					.attr("width", function(d) { return xScale(d.horsePower); })
-					.attr("fill", "steelblue")
-					.on("mouseover", function() {
-		        d3.select(this)
-		          .attr("fill", "orange");
-					})
-					.on("mouseout", function() {
-		        d3.select(this)
-		          .attr("fill", "steelblue");
-					});
+					.attr("fill", "steelblue");
 
-			goalSvg.append("g")
-				.attr("class", "y axis")
-				.attr("transform", "translate(" + margin.left + ",0)")
-				.call(yAxis);
+					goalSvg.append("g")
+						.attr("class", "y axis")
+						.attr("transform", "translate(" + margin.left + ",0)")
+						.call(yAxis);
 
 				});
 
