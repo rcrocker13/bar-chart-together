@@ -156,8 +156,6 @@
 		    $( "#goalSelection" ).selectmenu();
 		 	});
 
-			$( ".selector" ).on( "selectmenuchange", function( event, ui ) {} );
-
 			var margin = {top: 20, right: 10, bottom: 20, left: 100};
 			var height = 450 - margin.top - margin.bottom;
 			var width = 700 - margin.right - margin.left;
@@ -250,12 +248,34 @@
 					.attr("width", function(d) { return xScale(d.horsePower); })
 					.attr("fill", "steelblue");
 
-					goalSvg.append("g")
-						.attr("class", "y axis")
-						.attr("transform", "translate(" + margin.left + ",0)")
-						.call(yAxis);
+				goalSvg.append("g")
+					.attr("class", "y axis")
+					.attr("transform", "translate(" + margin.left + ",0)")
+					.call(yAxis);
+
+				// Trying to change values
+				$("#goalSelection").on( "selectmenuchange", function() {
+
+						var selection = $(".ui-selectmenu-text").html();
+
+						data.sort(function(a, b) {
+							// If a > b then a - b will return a value > 0, gives a a higher index value than b.
+							// a - b will sort values in ascending order.
+							// b - a will sort values in descending order.
+							return a.selection - b.selection;
+						});
+
+						var xScale = d3.scale.linear()
+							.domain(d3.extent(data, function(d) { return d.selection; }))
+							.range([0, width]);
+
+						bars
+							.transition()
+							.duration(500)
+							.attr("width", function(d) { return xScale(d.selection); });
 
 				});
+			});
 
 				// ***** TRY TO RESHUFFLE
 				// d3.select("#goal").on("click", function() {
