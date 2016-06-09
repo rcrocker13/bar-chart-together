@@ -16,13 +16,13 @@
 			header {
 				padding-top: 15px;
 				padding-left: 15px;
-				background-color: #3D3D3D;
+				background-color: #3f4c6b;
 				color: #EEE;
 			}
 			footer {
 				padding-top: 5px;
 				padding-left: 5px;
-				background-color: #3D3D3D;
+				background-color: #606c88;
 				color: #EEE;
 			}
 			.start-header {
@@ -32,7 +32,7 @@
 				margin-top: 10px;
 			}
 			.workspace {
-				background-color: #EDEDEB;
+				background-color: #C3D3E0;
 			}
 	    fieldset {
 	      border: 0;
@@ -133,14 +133,14 @@
 							<div class="col-md-4">
 								<!-- These are just like parameters in Tableau -->
 								<select  id="goalSelection" class="pull-right" name="goalSelection">
-									<option title="Bang!">Carburetors</option>
-									<option>Cylinders</option>
-									<option>Displacement</option>
-									<option>Gears</option>
-									<option>Horse Power</option>
-									<option>Miles per Gallon</option>
-									<option>Quarter Mile</option>
-									<option>Weight</option>
+									<option value="carburetors">Carburetors</option>
+									<option value="cylinders">Cylinders</option>
+									<option value="displacement">Displacement</option>
+									<option value="gears">Gears</option>
+									<option value="horsePower">Horse Power</option>
+									<option value="mpg">Miles per Gallon</option>
+									<option value="qt">Quarter Mile</option>
+									<option value="wt">Weight</option>
 								</select>
 							</div>
 						</div>
@@ -189,11 +189,8 @@
 						cylinders: +d.cyl,
 						displacement: +d.disp,
 						horsePower: +d.hp,
-						drat: +d.drat,
 						weight: +d.wt,
-						quarterMile: +d.qt,
-						vs: +d.vs,
-						am: +d.am,
+						quarterMile: +d.qsec,
 						gears: +d.gear,
 						carburetors: +d.carb
 					};
@@ -237,7 +234,7 @@
 		        d3.select(this)
 		        	.transition()
 		        	.duration(250)
-		          .attr("fill", "steelblue");
+		          .attr("fill", "#5CD3E9");
 					});
 
 				var goalG = goalSvg.selectAll("g")
@@ -251,7 +248,7 @@
 					.attr("x", margin.left)
 					.attr("height", height / data.length - 2.5)
 					.attr("width", function(d) { return xScale(d.horsePower); })
-					.attr("fill", "steelblue");
+					.attr("fill", "#5CD3E9");
 
 				goalSvg.append("g")
 					.attr("class", "y axis")
@@ -261,23 +258,39 @@
 				// Trying to change values
 				$("#goalSelection").on( "selectmenuchange", function() {
 
-						var selection = $(".ui-selectmenu-text").html();
+						switch($(".ui-selectmenu-text").text().toString().toLowerCase()) {
+							case "miles per gallon":
+								var selection = "mpg";
+								break;
+							case "horse power":
+								var selection = "horsePower";
+								break;
+							case "quarter mile":
+								var selection = "quarterMile";
+								break;
+							default:
+								var selection = $(".ui-selectmenu-text").text().toString().toLowerCase();
+							}
+
+						var xScale = d3.scale.linear()
+							.domain(d3.extent(data, function(d) { return d[selection]; }))
+							.range([0, width]);
+
+						var yScale = d3.scale.ordinal()
+							.domain(data.map(function(d) { return d.car; }))
+							.rangeBands([height, 0]);
 
 						data.sort(function(a, b) {
 							// If a > b then a - b will return a value > 0, gives a a higher index value than b.
 							// a - b will sort values in ascending order.
 							// b - a will sort values in descending order.
-							return a.selection - b.selection;
+							return a[selection] - b[selection];
 						});
-
-						var xScale = d3.scale.linear()
-							.domain(d3.extent(data, function(d) { return d.selection; }))
-							.range([0, width]);
 
 						bars
 							.transition()
 							.duration(500)
-							.attr("width", function(d) { return xScale(d.selection); });
+							.attr("width", function(d) { return xScale(d[selection]); });
 
 				});
 			});
