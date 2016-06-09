@@ -247,7 +247,7 @@
 					.attr("class", "bar")
 					.attr("x", margin.left)
 					.attr("height", height / data.length - 2.5)
-					.attr("width", function(d) { return xScale(d.horsePower); })
+					.attr("width", function(d) { return xScale(d.horsePower) - margin.left; })
 					.attr("fill", "#5CD3E9");
 
 				goalSvg.append("g")
@@ -290,7 +290,7 @@
 						bars
 							.transition()
 							.duration(500)
-							.attr("width", function(d) { return xScale(d[selection]); });
+							.attr("width", function(d) { return xScale(d[selection]) - margin.left; });
 
 				});
 			});
