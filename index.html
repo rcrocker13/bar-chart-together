@@ -25,6 +25,9 @@
 				background-color: #3D3D3D;
 				color: #EEE;
 			}
+			.start-header {
+				margin-top: 10px;
+			}
 			.goal-header {
 				margin-top: 10px;
 			}
@@ -118,7 +121,9 @@
 			</div>
 				<div class="row workspace">
 					<div id="start" class="col-md-6">
-						<h5>Start</h5>
+						<div class="row start-header">
+							<h5>Start</h5>
+						</div>
 					</div>
 					<div id="goal" class="col-md-6">
 						<div class="row goal-header">
@@ -201,7 +206,7 @@
 					// If a > b then a - b will return a value > 0, gives a a higher index value than b.
 					// a - b will sort values in ascending order.
 					// b - a will sort values in descending order.
-					return a.horsePower - b.horsePower;
+					return d3.ascending(a.horsePower,b.horsePower);
 				});
 
 				var xScale = d3.scale.linear()
