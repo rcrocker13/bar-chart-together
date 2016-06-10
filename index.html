@@ -49,24 +49,12 @@
 	    }
 			<!-- D3 Styles -->
 			<!-- WHY DOES THIS HOVER NOT WORK WITHOUT INCLUDE THE RECT SELECTOR?
- 			rect {
+ 			rect:hover {
 	      -moz-transition: all 0.5s;
 	      -o-transition: all 0.5s;
 	      -webkit-transition: all 0.5s;
 	      transition: all 0.5s;
 	      fill: orange;
-			}
-			.invisible:hover {
-				fill: orange;
-			}
-			.axis path,
-			.axis line {
-				fill: none;
-				stroke: #ccc;
-				shape-rendering: auto;
-			}
-			.axis text {
-				font-size: 8px;
 			}
 		</style>
 	</head>
@@ -133,11 +121,11 @@
 							<div class="col-md-4">
 								<!-- These are just like parameters in Tableau -->
 								<select  id="goalSelection" class="pull-right" name="goalSelection">
+									<option value="horsePower" selected>Horse Power</option>
 									<option value="carburetors">Carburetors</option>
 									<option value="cylinders">Cylinders</option>
 									<option value="displacement">Displacement</option>
 									<option value="gears">Gears</option>
-									<option value="horsePower">Horse Power</option>
 									<option value="mpg">Miles per Gallon</option>
 									<option value="qt">Quarter Mile</option>
 									<option value="wt">Weight</option>
@@ -156,12 +144,13 @@
 			</div>
 		</div>
 		<script>
-			// render the jQuery dropdown element
+			// Render the Select Menu
 		  $(function() {
-		    $( "#goalSelection" ).selectmenu();
+		    $("#goalSelection").selectmenu();
 		 	});
 
-			var margin = {top: 20, right: 10, bottom: 20, left: 100};
+		  // Margin, height and width with be used in all of our charts
+			var margin = {top: 10, right: 25, bottom: 20, left: 75};
 			var height = 450 - margin.top - margin.bottom;
 			var width = 700 - margin.right - margin.left;
 			var startSvg = d3.select("#start").append("svg")
@@ -171,17 +160,36 @@
 				.style("border-radius", "5px")
 				.style("background-color", "#FFF");
 
-			// Append Goals Bar Chart
-			var goalSvg = d3.select("#goal").append("svg")
-				.attr("width", width)
-				.attr("height", height)
-				.style("border", "1px solid #ccc")
-				.style("border-radius", "5px")
-				.style("background-color", "#FFF");
+				// Set the scales and axis
+				var xScale = d3.scale.linear()
+					.range([0, width]);
 
+				var xAxis = d3.svg.axis()
+					.scale(xScale)
+					.orient("bottom");
+
+				var yScale = d3.scale.ordinal()
+					.rangeBands([height, 0]);
+
+				var yAxis = d3.svg.axis()
+					.scale(yScale)
+					.orient("left");
+
+			// Append Goals Bar Chart
+			var goalG = d3.select("#goal").append("svg")
+					.attr("width", width)
+					.attr("height", height)
+					.style("border-radius", "5px")
+					.style("background-color", "#FFF");
+
+			var chart = goalG.append("g")
+					.attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+			// Load in the mtcars dataset
 			d3.csv("mtcars.csv", function(data) {
 
-				data = data.map(function(d) {
+				// Convert the strings to SVGs
+				var mtcars = data.map(function(d) {
 
 					return {
 						car: d.car,
@@ -197,157 +205,201 @@
 
 				});
 
-				console.log(data);
-
-				data.sort(function(a, b) {
-					// If a > b then a - b will return a value > 0, gives a a higher index value than b.
-					// a - b will sort values in ascending order.
-					// b - a will sort values in descending order.
+				mtcars.sort(function(a,b) {
 					return d3.ascending(a.horsePower,b.horsePower);
 				});
 
-				var xScale = d3.scale.linear()
-					.domain(d3.extent(data, function(d) { return d.horsePower; }))
-					.range([0, width]);
+				// Reset the scale and axis domains
+				xScale
+					.domain(d3.extent(mtcars, function(d) {
+						return d.horsePower;
+					}));
 
-				var yScale = d3.scale.ordinal()
-					.domain(data.map(function(d) { return d.car; }))
-					.rangeBands([height, 0]);
+				yScale
+					.domain(mtcars.map(function(d) {return d.car; }));
 
-				var yAxis = d3.svg.axis()
-					.scale(yScale)
-					.orient("left");
+				// ENTER
+				// Create new elements as needed
+				var car = chart.selectAll("rect")
+					.data(mtcars, function(d) { return d.car; });
 
-				goalSvg.selectAll("rect")
-					.data(data).enter()
-					.append("rect")
-					.attr("class", "invisible bar")
-					.attr("x", margin.left)
+			  car
+					.enter().append("rect")
 					.attr("y", function(d) { return yScale(d.car); })
-					.attr("height", height / data.length - 2.5)
-					.attr("width", width)
-					.on("mouseover", function() {
-		        d3.select(this)
-		          .attr("fill", "orange");
+					.attr("width", function(d) {
+						return xScale(d.horsePower) - margin.left;
 					})
-					.on("mouseout", function() {
-		        d3.select(this)
-		        	.transition()
-		        	.duration(250)
-		          .attr("fill", "#5CD3E9");
+					.attr("height", function(d) { return height / data.length - 1; })
+					.attr("fill", "steelblue");
+
+				var text = chart.selectAll("text")
+					.data(mtcars, function(d) { return d.car; });
+
+			  text
+					.enter().append("text")
+					.attr("font-family", "sans-serif")
+					.attr("font-size", "8px")
+					.attr("fill", "#333")
+					.attr("transform", function(d) {
+						return "translate(-5," + (yScale(d.car) + 10) + ")";
+					})
+					.text(function(d) { return d.car; })
+					.attr("text-anchor", "end");
+
+				function update(data, selection) {
+
+					// Let's standardize our data structure
+					var slimData = [];
+
+					if(selection) {
+						data.forEach(function(car) {
+							slimData.push({
+								car: car.car,
+								value: car[selection]
+							});
+						});
+					} else {
+						data.forEach(function(car) {
+							slimData.push({
+								car: car.car,
+								value: car.horsePower
+							});
+						});
+					}
+
+					slimData.sort(function(a,b) {
+						return d3.ascending(a.value,b.value);
 					});
 
-				var goalG = goalSvg.selectAll("g")
-					.data(data).enter()
-					.append("g")
-					.attr("class", "bar")
-					.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
+					// Reset the scale and axis domains
+					xScale
+						.domain(d3.extent(slimData, function(d) {
+							return d.value;
+						}));
 
-				bars = goalG.append("rect")
-					.attr("class", "bar")
-					.attr("x", margin.left)
-					.attr("height", height / data.length - 2.5)
-					.attr("width", function(d) { return xScale(d.horsePower) - margin.left; })
-					.attr("fill", "#5CD3E9");
+					yScale
+						.domain(slimData.map(function(d) {return d.car; }));
 
-				goalSvg.append("g")
-					.attr("class", "y axis")
-					.attr("transform", "translate(" + margin.left + ",0)")
-					.call(yAxis);
-
-				// Trying to change values
-				$("#goalSelection").on( "selectmenuchange", function() {
-
-						switch($(".ui-selectmenu-text").text().toString().toLowerCase()) {
-							case "miles per gallon":
-								var selection = "mpg";
-								break;
-							case "horse power":
-								var selection = "horsePower";
-								break;
-							case "quarter mile":
-								var selection = "quarterMile";
-								break;
-							default:
-								var selection = $(".ui-selectmenu-text").text().toString().toLowerCase();
-							}
-
-						var xScale = d3.scale.linear()
-							.domain(d3.extent(data, function(d) { return d[selection]; }))
-							.range([0, width]);
-
-						var yScale = d3.scale.ordinal()
-							.domain(data.map(function(d) { return d.car; }))
-							.rangeBands([height, 0]);
-
-						data.sort(function(a, b) {
-							// If a > b then a - b will return a value > 0, gives a a higher index value than b.
-							// a - b will sort values in ascending order.
-							// b - a will sort values in descending order.
-							return a[selection] - b[selection];
+				  car
+				  	.data(slimData, function(d) { return d.car; })
+				  	.transition()
+				  	.duration(750)
+						.attr("y", function(d) { return yScale(d.car); })
+						.attr("width", function(d, i) {
+							return xScale(d.value) - margin.left;
 						});
 
-						bars
-							.transition()
-							.duration(500)
-							.attr("width", function(d) { return xScale(d[selection]) - margin.left; });
+					text
+						.data(slimData, function(d) { return d.car; })
+						.transition()
+						.duration(750)
+						.attr("transform", function(d) {
+							return "translate(-5," + (yScale(d.car) + 10) + ")";
+						});
+
+				}
+
+				$("#goalSelection").on( "selectmenuchange", function() {
+
+					switch($(".ui-selectmenu-text").text().toString().toLowerCase()) {
+						case "miles per gallon":
+							var selection = "mpg";
+							break;
+						case "horse power":
+							var selection = "horsePower";
+							break;
+						case "quarter mile":
+							var selection = "quarterMile";
+							break;
+						default:
+							var selection = $(".ui-selectmenu-text").text().toString().toLowerCase();
+					}
+
+					update(mtcars, selection);
 
 				});
-			});
 
-				// ***** TRY TO RESHUFFLE
-				// d3.select("#goal").on("click", function() {
+				// data.sort(function(a, b) {
+				// 	// If a > b then a - b will return a value > 0, gives a a higher index value than b.
+				// 	// a - b will sort values in ascending order.
+				// 	// b - a will sort values in descending order.
+				// 	return d3.ascending(a.horsePower,b.horsePower);
+				// });
 
-					// 	d3.selectAll("rect")
-					// 		.update();
+				// var xScale = d3.scale.linear()
+				// 	.domain(d3.extent(data, function(d) { return d.horsePower; }))
+				// 	.range([0, width]);
 
-					// 	d3.csv("mtcars.csv", function(data) {
+				// var xAxis = d3.svg.axis()
+				// 	.scale(xScale)
+				// 	.orient("bottom");
 
-					// 		data = data.map(function(d) {
+				// var yScale = d3.scale.ordinal()
+				// 	.domain(data.map(function(d) { return d.car; }))
+				// 	.rangeBands([height, 0]);
 
-					// 			return {
-					// 				car: d.car,
-					// 				mpg: +d.mpg,
-					// 				cylinders: +d.cyl,
-					// 				displacement: +d.disp,
-					// 				horsePower: +d.hp,
-					// 				drat: +d.drat,
-					// 				weight: +d.wt,
-					// 				quarterMile: +d.qt,
-					// 				vs: +d.vs,
-					// 				am: +d.am,
-					// 				gears: +d.gear,
-					// 				carburetors: +d.carb
-					// 			};
-					// 		});
+				// var yAxis = d3.svg.axis()
+				// 	.scale(yScale)
+				// 	.orient("left");
 
-					// 		data.sort(function(a, b) {
-					// 			return a.quarterMile - b.quarterMile;
-					// 		});
+				// var goalG = goalSvg.selectAll("g")
+				// 	.data(data).enter()
+				// 	.append("g")
+				// 	.attr("class", "bar")
+				// 	.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
 
-					// 		var xScale = d3.scale.linear()
-					// 			.domain(d3.extent(data, function(d) { return d.quarterMile; }))
-					// 			.range([0, width]);
+				// bars = goalG.append("rect")
+				// 	.attr("class", "bar")
+				// 	.attr("x", margin.left)
+				// 	.attr("height", height / data.length - 2.5)
+				// 	.attr("width", function(d) { return xScale(d.horsePower) - margin.left; })
+				// 	.attr("fill", "#5CD3E9");
 
-					// 		var yScale = d3.scale.ordinal()
-					// 			.domain(data.map(function(d) { return d.car; }))
-					// 			.rangeRoundBands([height, 0], 0, 1);
+				// goalSvg.append("g")
+				// 	.attr("class", "y axis")
+				// 	.attr("transform", "translate(" + margin.left + ",0)")
+				// 	.call(yAxis);
 
-					// 		var goalG = goalSvg.selectAll("g")
-					// 			.data(data).enter()
-					// 			.append("g")
-					// 			.attr("class", "bar")
-					// 			.attr("transform", function(d) { return "translate(0," + yScale(d.car) + ")"; });
+				// // Trying to change values
+				// $("#goalSelection").on( "selectmenuchange", function() {
 
-					// 		bars = goalG.append("rect")
-					// 			.attr("x", margin.left)
-					// 			.attr("height", height / data.length - 2.5)
-					// 			.attr("width", function(d) { return xScale(d.quarterMile); })
-					// 			.attr("fill", "steelblue");
+				// 		switch($(".ui-selectmenu-text").text().toString().toLowerCase()) {
+				// 			case "miles per gallon":
+				// 				var selection = "mpg";
+				// 				break;
+				// 			case "horse power":
+				// 				var selection = "horsePower";
+				// 				break;
+				// 			case "quarter mile":
+				// 				var selection = "quarterMile";
+				// 				break;
+				// 			default:
+				// 				var selection = $(".ui-selectmenu-text").text().toString().toLowerCase();
+				// 			}
 
-					// 	});
+				// 		var xScale = d3.scale.linear()
+				// 			.domain(d3.extent(data, function(d) { return d[selection]; }))
+				// 			.range([0, width]);
+
+				// 		var yScale = d3.scale.ordinal()
+				// 			.domain(data.map(function(d) { return d.car; }))
+				// 			.rangeBands([height, 0]);
+
+				// 		data.sort(function(a, b) {
+				// 			// If a > b then a - b will return a value > 0, gives a a higher index value than b.
+				// 			// a - b will sort values in ascending order.
+				// 			// b - a will sort values in descending order.
+				// 			return a[selection] - b[selection];
+				// 		});
+
+				// 		bars
+				// 			.transition()
+				// 			.duration(500)
+				// 			.attr("width", function(d) { return xScale(d[selection]) - margin.left; });
 
 				// });
+
+			});
 
 			</script>
 		</body>
