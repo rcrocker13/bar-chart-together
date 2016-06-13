@@ -13,23 +13,28 @@
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
 		<style>
+			body {
+				font-family: monospace;
+			}
 			header {
-				padding-top: 15px;
 				padding-left: 15px;
-				background-color: #7EC3FF;
+				background-color: #A68950;
+			}
+			header h1 {
+				margin-bottom: 2px;
+			}
+			.references h4 {
+				font-size: 12px;
 				color: #536B7F;
 			}
 			.references {
-				background-color: #E2F1FF;
-				color: #7EC3FF;
-			}
-			.col-md-2 {
-				margin-left: 5px;
+				background-color: #F8ECC2;
+				font-size: 10px;
+				color: #536B7F;
 			}
 			footer {
 				padding-top: 5px;
-				background-color: #7EC3FF;
-				color: #536B7F;
+				background-color: #A68950;
 			}
 			footer p {
 				padding-left: 20px;
@@ -47,26 +52,8 @@
 				width: 180px;
 			}
 			.workspace {
-				padding-bottom: 5px;
-				background-color: #E2F1FF;
-			}
-	    fieldset {
-	      border: 0;
-	    }
-	    label {
-	      display: block;
-	      margin: 30px 0 0 0;
-	    }
-	    .overflow {
-	      height: 200px;
-	    }
-			<!-- D3 Styles -->
- 			rect:hover {
-	      -moz-transition: all 0.5s;
-	      -o-transition: all 0.5s;
-	      -webkit-transition: all 0.5s;
-	      transition: all 0.5s;
-	      fill: orange;
+				padding-bottom: 25px;
+				background-color: #F8ECC2;
 			}
 		</style>
 	</head>
@@ -81,40 +68,48 @@
 				<div class="col-md-2">
 					<h4>HTML</h4>
 					<ul>
+						<li>DOM</li>
 						<li>head</li>
 						<li>meta</li>
+						<li><a href="http://cssguidelin.es/">style</a></li>
 						<li>body</li>
+						<li>script</li>
 					</ul>
 				</div>
 				<div class="col-md-2">
 					<h4>CSS</h4>
 					<ul>
 						<li>selector</li>
+						<li>property</li>
 						<li>values</li>
-						<li>hover</li>
+						<li>The Cascade</li>
+						<li><a href="http://learn.shayhowe.com/html-css/getting-to-know-css/"></a>Specificity Weight</li>
 					</ul>
 				</div>
 				<div class="col-md-2">
 					<h4>JavaScript</h4>
 					<ul>
+						<li><a href="http://stackoverflow.com/questions/11576018/what-is-the-difference-between-a-javascript-framework-and-a-library">libraries</a></li>
 						<li>variables</li>
 						<li>functions</li>
-						<li>AJAX</li>
+						<li><a href="https://developer.mozilla.org/en-US/docs/AJAX/Getting_Started">AJAX</a></li>
 					</ul>
 				</div>
 				<div class="col-md-2">
 					<h4>SVG</h4>
 					<ul>
 						<li>nesting</li>
+						<li>shapes</li>
 						<li>rect</li>
-						<li>properties</li>
+						<li>text</li>
+						<li>advanced features</li>
 					</ul>
 				</div>
 				<div class="col-md-2">
 					<h4>D3</h4>
 					<ul>
-						<li>data</li>
-						<li>select, enter, append</li>
+						<li>load data, transform, bind and style</li>
+						<li>select, enter, update and append</li>
 						<li>transition</li>
 					</ul>
 				</div>
@@ -245,8 +240,9 @@
 							return xScale(d.horsePower) - margin.left;
 						}
 					})
-					.attr("height", function(d) { return height / data.length - 1; })
-					.attr("fill", "#536B7F");
+					.attr("height", function(d) { return height / data.length - 2; })
+					.attr("fill", "none")
+					.style("stroke", "#ccc");
 
 				var text = chart.selectAll("text")
 					.data(mtcars, function(d) { return d.car; });
@@ -255,7 +251,7 @@
 					.enter().append("text")
 					.attr("font-family", "Helvetica")
 					.attr("font-size", "8px")
-					.attr("fill", "#333")
+					.attr("fill", "#000")
 					.attr("transform", function(d) {
 						return "translate(-5," + (yScale(d.car) + 10) + ")";
 					})
