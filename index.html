@@ -4,162 +4,143 @@
 		<meta charset="utf-8">
 		<title>Getting Started with D3</title>
 
+		<link rel="stylesheet" href="libs/cutestrap/dist/css/cutestrap.css">
 		<script type="text/javascript" src="libs/jquery-ui/external/jquery/jquery.js"></script>
-		<script type="text/javascript" src="libs/jquery-ui/jquery-ui.js"></script>
 		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
-		<script type="text/javascript" src="libs/bootstrap-select/js/bootstrap-select.js"></script>
-
-		<link rel="stylesheet" href="libs/jquery-ui/jquery-ui.css">
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
 		<style>
-			body {
-				font-family: monospace;
+			h1, h2, h3, h4, h5, h6 {
+				padding: 0px 0px 0px 15px;
 			}
 			header {
+				background-color: #70C1B3;
+			}
+			/* How the sticky footer works
+			http://matthewjamestaylor.com/blog/keeping-footers-at-the-bottom-of-the-page
+			*/
+			#container {
+			   min-height:100%;
+			   position:relative;
+			}
+			.grid > * {
+				padding-right: 0px;
+			}
+			.grid.workspace {
 				padding-left: 15px;
-				background-color: #A68950;
 			}
-			header h1 {
-				margin-bottom: 2px;
+			.select {
+		    width: 258px;
 			}
-			.references h4 {
-				font-size: 12px;
-				color: #536B7F;
+			html,
+			body {
+			   margin:0;
+			   padding:0;
+			   height:100%;
 			}
-			.references {
-				background-color: #F8ECC2;
-				font-size: 10px;
-				color: #536B7F;
+			header {
+				background:#70C1B3;
+				color: #fff;
+				text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+			}
+			form {
+				padding: 0px;
+			}
+			label {
+				margin-bottom: 0px;
+				padding-top: 0px;
 			}
 			footer {
-				padding-top: 5px;
-				background-color: #A68950;
+				padding-left: 15px;
+				position:absolute;
+				bottom:0;
+				width:100%;
+				height:30px;   /* Height of the footer */
+				background:#70C1B3;
+				color: #fff;
+				text-shadow: 1px 2px 2px rgba(0,0,0,0.3);
 			}
-			footer p {
-				padding-left: 20px;
-			}
-			.start-header {
-				padding-left: 20px;
-				margin-top: 10px;
-				color: #536B7F;
-			}
-			.goal-header {
-				margin-top: 10px;
-				color: #536B7F;
-			}
-			#goalSelection {
-				width: 180px;
-			}
-			.workspace {
-				padding-bottom: 25px;
-				background-color: #F8ECC2;
+			h4 {
+				color: #70C1B3;
 			}
 		</style>
 	</head>
 	<body>
-		<div class="container-fluid">
-			<div class="row">
-				<header class="col-md-12">
-					<h1>Let's Build a Bar Chart... Together</h1>
-				</header>
-			</div>
-			<div class="row references">
-				<div class="col-md-2">
-					<h4>HTML</h4>
-					<ul>
-						<li>DOM</li>
-						<li>head</li>
-						<li>meta</li>
-						<li><a href="http://cssguidelin.es/">style</a></li>
-						<li>body</li>
-						<li>script</li>
-					</ul>
-				</div>
-				<div class="col-md-2">
-					<h4>CSS</h4>
-					<ul>
-						<li>selector</li>
-						<li>property</li>
-						<li>values</li>
-						<li>The Cascade</li>
-						<li><a href="http://learn.shayhowe.com/html-css/getting-to-know-css/"></a>Specificity Weight</li>
-					</ul>
-				</div>
-				<div class="col-md-2">
-					<h4>JavaScript</h4>
-					<ul>
-						<li><a href="http://stackoverflow.com/questions/11576018/what-is-the-difference-between-a-javascript-framework-and-a-library">libraries</a></li>
-						<li>variables</li>
-						<li>functions</li>
-						<li><a href="https://developer.mozilla.org/en-US/docs/AJAX/Getting_Started">AJAX</a></li>
-					</ul>
-				</div>
-				<div class="col-md-2">
-					<h4>SVG</h4>
-					<ul>
-						<li>nesting</li>
-						<li>shapes</li>
-						<li>rect</li>
-						<li>text</li>
-						<li>advanced features</li>
-					</ul>
-				</div>
-				<div class="col-md-2">
-					<h4>D3</h4>
-					<ul>
-						<li>load data, transform, bind and style</li>
-						<li>select, enter, update and append</li>
-						<li>transition</li>
-					</ul>
-				</div>
-			</div>
-				<div class="row workspace">
-					<div id="start" class="col-md-6">
-						<div class="row start-header">
-							<h4>Start</h4>
+		<section id="container">
+
+			<header>
+				<h1>Let's Build a Bar Chart... Together</h1>
+			</header>
+
+			<body class="grid">
+
+				<section class="grid workspace">
+
+					<div id="start" class="column">
+
+						<div>
+							<h5>Start</h5>
 						</div>
+
 					</div>
-					<div id="goal" class="col-md-6">
-						<div class="row goal-header">
-							<div class="col-md-8">
-								<h4>Goal</h4>
+
+					<div id="goal" class="column">
+
+						<div class="column">
+							<h5>Goal</h5>
+						</div>
+
+						<section class="grid">
+							<div class="column-75">
+								<h4>Finished Bar Chart</h4>
 							</div>
-							<div class="col-md-4">
+
+							<div class="column-25">
 								<!-- These are just like parameters in Tableau -->
-								<select  id="goalSelection" class="pull-right" name="goalSelection">
-									<option value="horsePower" selected>Horse Power</option>
-									<option value="carburetors">Carburetors</option>
-									<option value="cylinders">Cylinders</option>
-									<option value="displacement">Displacement</option>
-									<option value="gears">Gears</option>
-									<option value="mpg">Miles per Gallon</option>
-									<option value="qt">Quarter Mile</option>
-									<option value="wt">Weight</option>
-								</select>
+								<form>
+
+									<label class="select">
+										<select  id="goalSelection" name="goalSelection">
+											<option value="horsePower" selected>Horse Power</option>
+											<option value="carburetors">Carburetors</option>
+											<option value="cylinders">Cylinders</option>
+											<option value="displacement">Displacement</option>
+											<option value="gears">Gears</option>
+											<option value="mpg">Miles per Gallon</option>
+											<option value="qt">Quarter Mile</option>
+											<option value="wt">Weight</option>
+										</select>
+
+										<span class="select__label" for="select">Choose a value to sort</span>
+									</label>
+
+								</form>
+
 							</div>
-						</div>
+						</section>
+
 					</div>
-				</div>
-			</div>
-			<div class="row">
-				<footer class="col-md-12">
-					<p>
-						For more information reachout to <a href="mailto:SFdataviz@slalom.com">SF Data Viz</a>.
-					</p>
-				</footer>
-			</div>
-		</div>
+
+				</section>
+
+			</body>
+			<footer>
+				For more information reachout to <a href="mailto:SFdataviz@slalom.com">SF Data Viz</a>.
+			</footer>
+		</section>
+</html>
+
 		<script>
 
+		// funPalette = ["#50514F", "#F25F5C", "#FFE066", "#247BA0", "#70C1B3"]
+
 			// Bring in the select menu from the jQuery library
-		  $(function() {
-		    $("#goalSelection").selectmenu();
-		 	});
+		  // $(function() {
+		  //   $("#goalSelection").selectmenu();
+		 	// });
 
 		  // These variable will help up position the charts
 			var margin = {top: 40, right: 15, bottom: 0, left: 100};
-			var height = 405 - margin.top - margin.bottom;
+			var height = 470 - margin.top - margin.bottom;
 			var width = 700 - margin.right - margin.left;
 			var startSvg = d3.select("#start").append("svg")
 				.attr("width", width)
@@ -168,25 +149,26 @@
 				.style("border-radius", "5px")
 				.style("background-color", "#FFF");
 
-				// Set the scales and axis
-				var xScale = d3.scale.linear()
-					.range([0, width - margin.right]);
+			// Set the scales and axis
+			var xScale = d3.scale.linear()
+				.range([0, width - margin.right]);
 
-				var xAxis = d3.svg.axis()
-					.scale(xScale)
-					.orient("bottom");
+			var xAxis = d3.svg.axis()
+				.scale(xScale)
+				.orient("bottom");
 
-				var yScale = d3.scale.ordinal()
-					.rangeBands([height - margin.top - 5, 0	]);
+			var yScale = d3.scale.ordinal()
+				.rangeBands([height - 5, 0	]);
 
-				var yAxis = d3.svg.axis()
-					.scale(yScale)
-					.orient("left");
+			var yAxis = d3.svg.axis()
+				.scale(yScale)
+				.orient("left");
 
 			// Append Goals Bar Chart
 			var goalG = d3.select("#goal").append("svg")
 					.attr("width", width)
 					.attr("height", height)
+					.style("border", "1px solid #ccc")
 					.style("border-radius", "5px")
 					.style("background-color", "#FFF");
 
@@ -205,11 +187,6 @@
 				.attr("in","coloredBlur");
 			feMerge.append("feMergeNode")
 				.attr("in","SourceGraphic");
-
-			// ***** I may not need to use this *****
-			// This group will contain our chart
-			// var chart = goalG.append("g")
-			// 		.attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
 			// Load in the mtcars dataset
 			d3.csv("mtcars.csv", function(data) {
@@ -244,13 +221,6 @@
 				yScale
 					.domain(mtcars.map(function(d) {return d.car; }));
 
-				// // Add a Chart Title
-				// var title = goalG.append("text")
-				// 	.attr("font-family", "monospace")
-				// 	.attr("font-size", "24px")
-				// 	.attr("fill", "#ccc")
-				// 	.attr("text", "Motor Trend Cars");
-
 				// ENTER
 				// Create new elements as needed
 				var car = goalG.selectAll("rect")
@@ -259,7 +229,7 @@
 			  car
 					.enter().append("rect")
 					.attr("x", margin.left)
-					.attr("y", function(d) { return yScale(d.car) + margin.top; })
+					.attr("y", function(d) { return yScale(d.car) + 5; })
 					.attr("width", function(d) {
 						if(xScale(d.horsePower) - margin.left < 0) {
 							return 0;
@@ -277,24 +247,13 @@
 
 			  text
 					.enter().append("text")
-					.attr("font-family", "monospace")
-					.attr("font-size", "8px")
 					.attr("fill", "#000")
+					.style("font-size", "10px")
 					.attr("transform", function(d) {
-						return "translate(" + (margin.left - 5) + "," + (yScale(d.car)  + margin.top + 10) + ")";
+						return "translate(" + (margin.left - 5) + "," + (yScale(d.car) + 15) + ")";
 					})
 					.text(function(d) { return d.car; })
 					.attr("text-anchor", "end");
-
-				// Add a Chart Title
-				var title = goalG.append("text")
-					.attr("x", "15")
-					.attr("y", "33")
-					.attr("font-family", "monospace")
-					.attr("font-size", "28px")
-					.attr("fill", "#000")
-					.attr("text-anchor", "start")
-					.text("Motor Trend Cars");
 
 				function update(data, selection) {
 
@@ -334,7 +293,7 @@
 				  	.data(slimData, function(d) { return d.car; })
 				  	.transition()
 				  	.duration(750)
-						.attr("y", function(d) { return yScale(d.car) + margin.top;; })
+						.attr("y", function(d) { return yScale(d.car) + 5; })
 						.attr("width", function(d, i) {
 							if(xScale(d.value) - margin.left < 0) {
 								return 0;
@@ -348,14 +307,14 @@
 						.transition()
 						.duration(750)
 					.attr("transform", function(d) {
-						return "translate(" + (margin.left - 5) + "," + (yScale(d.car)  + margin.top+ 10) + ")";
+						return "translate(" + (margin.left - 5) + "," + (yScale(d.car) + 15) + ")";
 					});
 
 				}
 
-				$("#goalSelection").on( "selectmenuchange", function() {
+				$("#goalSelection").on( "change", function() {
 
-					switch($(".ui-selectmenu-text").text().toString().toLowerCase()) {
+					switch($('#goalSelection :selected').text().toString().toLowerCase()) {
 						case "miles per gallon":
 							var selection = "mpg";
 							break;
@@ -366,7 +325,7 @@
 							var selection = "quarterMile";
 							break;
 						default:
-							var selection = $(".ui-selectmenu-text").text().toString().toLowerCase();
+							var selection = $('#goalSelection :selected').text().toString().toLowerCase();
 					}
 
 					update(mtcars, selection);
