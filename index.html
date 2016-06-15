@@ -21,6 +21,16 @@
 			/* How the sticky footer works
 			http://matthewjamestaylor.com/blog/keeping-footers-at-the-bottom-of-the-page
 			*/
+			#start-triangle {
+				padding-left: 35px;
+				display: inline-block;
+				position: absolute;
+			}
+			#finish-triangle {
+				padding-left: 665px;
+				display: inline-block;
+				position: absolute;
+			}
 			#container {
 			   min-height:100%;
 			   /* position:relative; */
@@ -34,6 +44,9 @@
 			}
 			.select {
 		    width: 258px;
+			}
+			h6 {
+				margin-top: 5px;
 			}
 			html,
 			body {
@@ -73,6 +86,10 @@
 			</header>
 
 			<body class="grid">
+
+				<img id="start-triangle" src="images/triangle.svg">
+
+				<img id="finish-triangle" src="images/triangle.svg">
 
 				<section class="grid workspace">
 
