@@ -9,8 +9,11 @@
 		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 
 		<style>
-			h1, h2, h3, h4, h5, h6 {
-				padding: 0px 0px 0px 15px;
+/* Great color palette:
+   ["#35AD80", "#F9F9F9", "#272A2A", "#CACBCD", "#D1EADF", "#A6A4A6", "#A0CBBA"]; */
+
+			h6 {
+				padding: 5px 0px 15px 0px;
 			}
 			header {
 				background-color: #70C1B3;
@@ -20,13 +23,14 @@
 			*/
 			#container {
 			   min-height:100%;
-			   position:relative;
+			   /* position:relative; */
 			}
-			.grid > * {
-				padding-right: 0px;
+			#start {
+				margin-left: 25px;
 			}
-			.grid.workspace {
-				padding-left: 15px;
+			#goal h3 {
+				padding: 34px 0px 5px 0px;
+				color: #70C1B3;
 			}
 			.select {
 		    width: 258px;
@@ -59,9 +63,6 @@
 				color: #fff;
 				text-shadow: 1px 2px 2px rgba(0,0,0,0.3);
 			}
-			h4 {
-				color: #70C1B3;
-			}
 		</style>
 	</head>
 	<body>
@@ -78,7 +79,7 @@
 					<div id="start" class="column">
 
 						<div>
-							<h5>Start</h5>
+							<h6>Start</h6>
 						</div>
 
 					</div>
@@ -86,15 +87,15 @@
 					<div id="goal" class="column">
 
 						<div class="column">
-							<h5>Goal</h5>
+							<h6>Goal</h6>
 						</div>
 
 						<section class="grid">
-							<div class="column-75">
-								<h4>Finished Bar Chart</h4>
+							<div class="column">
+								<h3>Finished Bar Chart</h3>
 							</div>
 
-							<div class="column-25">
+							<div class="column">
 								<!-- These are just like parameters in Tableau -->
 								<form>
 
@@ -140,7 +141,7 @@
 
 		  // These variable will help up position the charts
 			var margin = {top: 40, right: 15, bottom: 0, left: 100};
-			var height = 470 - margin.top - margin.bottom;
+			var height = 450 - margin.top - margin.bottom;
 			var width = 700 - margin.right - margin.left;
 			var startSvg = d3.select("#start").append("svg")
 				.attr("width", width)
@@ -238,7 +239,7 @@
 						}
 					})
 					.attr("height", function(d) { return height / data.length - 3; })
-					.attr("fill", "#ccc")
+					.attr("fill", "#A6A4A6")
 					.attr("opacity", ".45")
 					.style("filter", "url(#glow)");
 
