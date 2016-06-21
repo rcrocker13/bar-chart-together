@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Getting Started with D3</title>
+		<title>Let's Make a Bar Chart</title>
 
 		<link rel="stylesheet" href="libs/cutestrap/css/cutestrap.css">
 		<script type="text/javascript" src="libs/jquery-ui/external/jquery/jquery.js"></script>
@@ -10,7 +10,11 @@
 
 		<style>
 /* Great color palette:
-   ["#35AD80", "#F9F9F9", "#272A2A", "#CACBCD", "#D1EADF", "#A6A4A6", "#A0CBBA"]; */
+   ["#35AD80", "#F9F9F9", "#272A2A", "#CACBCD", "#D1EADF", "#A6A4A6", "#A0CBBA"];
+
+		Font ideas from:
+		https://medium.com/@erikdkennedy/7-rules-for-creating-gorgeous-ui-part-2-430de537ba96#.luitojgsv
+*/
 
 			h1 {
 				padding-left: .35em;
@@ -27,7 +31,7 @@
 				position: absolute;
 			}
 			#finish-triangle {
-				padding-left: 665px;
+				padding-left: 670px;
 				display: inline-block;
 				position: absolute;
 			}
@@ -159,7 +163,7 @@
 
 		  // These variable will help up position the charts
 			var margin = {top: 40, right: 15, bottom: 0, left: 100};
-			var height = 450 - margin.top - margin.bottom;
+			var height = 475 - margin.top - margin.bottom;
 			var width = 700 - margin.right - margin.left;
 			var startSvg = d3.select("#start").append("svg")
 				.attr("width", width)
@@ -247,6 +251,7 @@
 
 			  car
 					.enter().append("rect")
+					.attr("class", "bars")
 					.attr("x", margin.left)
 					.attr("y", function(d) { return yScale(d.car) + 5; })
 					.attr("width", function(d) {
@@ -257,7 +262,7 @@
 						}
 					})
 					.attr("height", function(d) { return height / data.length - 3; })
-					.attr("fill", "#A6A4A6")
+					//.style("fill", "red")
 					.attr("opacity", ".45")
 					.style("filter", "url(#glow)");
 
